@@ -10,37 +10,48 @@ A plugin-owned sidebar for **OpenCode V2**. It replaces OpenCode's native sideba
 
 ## Install
 
-### One command (recommended)
+### npm / npx (recommended)
 
-After this repository is published, users install the prebuilt plugin with one command:
+After the package is published to npm, install it with one command:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/OWNER/opencode-sidepanel/main/install.sh | sh
+npx opencode-sidepanel@latest install
 ```
 
-Replace `OWNER` with the GitHub account or organization that hosts this repository.
-
-The installer writes the prebuilt plugin to `~/.config/opencode/plugins/opencode-sidepanel`, adds it to `~/.config/opencode/cli.json`, and saves a `.sidepanel-backup` copy of an existing CLI configuration. It needs only `sh`, `python3`, and `base64`; it does **not** require Git, Bun, or a build step.
+The command adds the versioned npm package to `~/.config/opencode/cli.json`. OpenCode then downloads and loads it through its normal CLI plugin resolver. No Git clone, Bun installation, or build step is required for users.
 
 Restart OpenCode TUI windows after installation.
 
-### From a local checkout
+To remove it, delete the `opencode-sidepanel@...` entry from the `plugins` array in `~/.config/opencode/cli.json`.
+
+### Alternative: standalone installer
+
+The repository also includes a prebuilt shell installer for environments where npm is unavailable:
 
 ```sh
 ./install.sh
 ```
 
-## Develop locally
+When this repository is hosted, it can be run directly with:
 
-Requirements: OpenCode V2 (tested with 2.0.32) and Bun 1.3 or newer.
+```sh
+curl -fsSL https://raw.githubusercontent.com/OWNER/opencode-sidepanel/main/install.sh | sh
+```
+
+## Develop and publish
+
+Requirements: Bun 1.3 or newer and an npm account with permission to publish the configured package name.
 
 ```sh
 bun install
 bun run typecheck
 bun run build
+npm publish
 ```
 
-`bun run build` compiles `dist/tui.js` and refreshes the installer bundle.
+`bun run build` compiles `dist/tui.js` and refreshes the standalone installer bundle. `npm pack --dry-run` is useful for checking the published contents before release.
+
+This package exposes a `./tui` entrypoint, which is the standard OpenCode V2 CLI-plugin convention. Users can also add `"opencode-sidepanel"` directly to the `plugins` array in `cli.json` if they prefer manual configuration.
 
 ## Widget composition
 
