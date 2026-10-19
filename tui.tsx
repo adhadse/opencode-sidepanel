@@ -12,9 +12,9 @@ const usage = (v: unknown) => { const u = obj(v), c = obj(u.cache); return num(u
 const latest = (items: readonly any[]) => obj([...items].reverse().find((item) => item?.type === "assistant"));
 const gauge = (percent: number) => { const n = Math.max(0, Math.min(16, Math.round(percent * 16 / 100))); return "\u2588".repeat(n) + "\u2591".repeat(16 - n); };
 
-// Sidepanel owns the sidebar. Change these switches to choose its composition;
-// native sidebar content is intentionally suppressed by the replace slot below.
-const WIDGETS = {
+// Sidepanel owns the sidebar. These defaults are persisted per user and
+// changed from /sidepanel-settings, never by editing an OpenCode config file.
+const DEFAULT_WIDGETS = {
   context: true,
   mcp: true,
   agent: true,
@@ -23,6 +23,17 @@ const WIDGETS = {
   usage: true,
   subagents: true,
 } as const;
+type WidgetID = keyof typeof DEFAULT_WIDGETS;
+type SidepanelSettings = { widgets: Record<WidgetID, boolean> };
+const WIDGET_LABELS: Record<WidgetID, string> = {
+  context: "Context",
+  mcp: "MCP servers",
+  agent: "Agent",
+  activity: "Activity",
+  workspace: "Workspace",
+  usage: "Usage",
+  subagents: "Subagents",
+};
 
 function Heading(props: { label: string; tone?: string }) { return <text fg={props.tone ?? "cyan"}><b>{props.label.toUpperCase()}</b></text>; }
 function Line(props: { label: string; value: string; tone?: string }) { return <box flexDirection="row" justifyContent="space-between" gap={1}><text fg="gray">{props.label}</text><text fg={props.tone ?? "white"} wrapMode="none">{props.value}</text></box>; }
@@ -218,18 +229,35 @@ function Subagents(props: { ctx: any; id: string; cache: { sessions: Record<stri
   </box></Show>;
 }
 
-function Sidepanel(props: { ctx: any; id: string; cache: { sessions: Record<string, any> }; refresh: (rootID: string) => void }) { return <box flexDirection="column" gap={1} paddingLeft={1} paddingRight={1}>
+function Sidepanel(props: { ctx: any; id: string; cache: { sessions: Record<string, any> }; refresh: (rootID: string) => void; settings: SidepanelSettings }) { return <box flexDirection="column" gap={1} paddingLeft={1} paddingRight={1}>
   <text fg="cyan"><b>SIDEPANEL</b></text>
-  <Show when={WIDGETS.context}><Context {...props} /></Show>
-  <Show when={WIDGETS.mcp}><McpPanel {...props} /></Show>
-  <Show when={WIDGETS.agent}><Agent {...props} /></Show>
-  <Show when={WIDGETS.activity}><Activity {...props} /></Show>
-  <Show when={WIDGETS.workspace}><Workspace {...props} /></Show>
-  <Show when={WIDGETS.usage}><Usage {...props} /></Show>
-  <Show when={WIDGETS.subagents}><Subagents {...props} /></Show>
+  <Show when={props.settings.widgets.context}><Context {...props} /></Show>
+  <Show when={props.settings.widgets.mcp}><McpPanel {...props} /></Show>
+  <Show when={props.settings.widgets.agent}><Agent {...props} /></Show>
+  <Show when={props.settings.widgets.activity}><Activity {...props} /></Show>
+  <Show when={props.settings.widgets.workspace}><Workspace {...props} /></Show>
+  <Show when={props.settings.widgets.usage}><Usage {...props} /></Show>
+  <Show when={props.settings.widgets.subagents}><Subagents {...props} /></Show>
 </box>; }
 
 export default Plugin.define({ id: "opencode-sidepanel", setup(ctx) {
+  const [settings, updateSettings] = ctx.storage.store<SidepanelSettings>("settings", { initial: { widgets: { ...DEFAULT_WIDGETS } } });
+  const configureWidgets = async () => {
+    while (true) {
+      const widget = await ctx.ui.dialog.select({
+        title: "Sidepanel widgets",
+        placeholder: "Select a widget to show or hide",
+        options: (Object.keys(DEFAULT_WIDGETS) as WidgetID[]).map((id) => ({
+          title: WIDGET_LABELS[id] + (settings.widgets[id] ? " - shown" : " - hidden"),
+          value: id,
+          description: "Select to " + (settings.widgets[id] ? "hide" : "show"),
+        })),
+      });
+      if (!widget) return;
+      const id = widget as WidgetID;
+      await updateSettings((draft) => { draft.widgets[id] = !draft.widgets[id]; });
+    }
+  };
   const [subagentCache, setSubagentCache] = ctx.storage.memory<{ sessions: Record<string, any> }>("opencode-sidepanel-subagents", { initial: { sessions: {} } });
   const pending = new Set<string>();
   const loadSubagents = async (parentID: string, depth = 0): Promise<void> => {
@@ -245,10 +273,11 @@ export default Plugin.define({ id: "opencode-sidepanel", setup(ctx) {
   };
   ctx.keymap.layer(() => ({ mode: "global", commands: [
     { id: "sidepanel.open", title: "Open Sidepanel", group: "Sidepanel", bind: "f6", palette: true, slash: { name: "sidepanel" }, run: () => { ctx.ui.panel.open("opencode-sidepanel"); } },
+    { id: "sidepanel.settings", title: "Configure Sidepanel widgets", group: "Sidepanel", palette: true, slash: { name: "sidepanel-settings", aliases: ["sidepanel-config"] }, run: () => { void configureWidgets(); } },
     { id: "sidepanel.sessions.all", title: "Switch session from all locations", group: "Sidepanel", palette: true, slash: { name: "all-sessions", aliases: ["sessions-all"] }, run: async () => { const response = await ctx.client.session.list({ limit: 200 }); const id = await ctx.ui.dialog.select({ title: "All sessions", placeholder: "Search sessions across every location", options: response.data.map((session: any) => ({ title: session.title || "Untitled session", value: session.id, description: session.projectID || "global" })) }); if (id) ctx.ui.router.navigate({ type: "session", sessionID: id }); } },
   ] }));
   const home = ctx.ui.slot({ append: "home.footer.status", render: () => <text>All sessions: /all-sessions</text> });
-  const sidebar = ctx.ui.slot({ replace: "sidebar.content", render: ({ sessionID }) => <Sidepanel ctx={ctx} id={sessionID} cache={subagentCache} refresh={loadSubagents} /> });
-  const panel = ctx.ui.slot({ append: "session.panel", render: (input) => <Show when={input.name === "opencode-sidepanel"}><Sidepanel ctx={ctx} id={input.sessionID} cache={subagentCache} refresh={loadSubagents} /></Show> });
+  const sidebar = ctx.ui.slot({ replace: "sidebar.content", render: ({ sessionID }) => <Sidepanel ctx={ctx} id={sessionID} cache={subagentCache} refresh={loadSubagents} settings={settings} /> });
+  const panel = ctx.ui.slot({ append: "session.panel", render: (input) => <Show when={input.name === "opencode-sidepanel"}><Sidepanel ctx={ctx} id={input.sessionID} cache={subagentCache} refresh={loadSubagents} settings={settings} /></Show> });
   return () => { home(); sidebar(); panel(); };
 } });

@@ -53,29 +53,32 @@ npm publish
 
 This package exposes a `./tui` entrypoint, which is the standard OpenCode V2 CLI-plugin convention. Users can also add `"opencode-sidepanel"` directly to the `plugins` array in `cli.json` if they prefer manual configuration.
 
-## Widget composition
+## Configure from the UI
 
-The plugin uses a `replace: "sidebar.content"` slot claim. This intentionally suppresses OpenCode's native sidebar contents, so the plugin completely controls what appears there.
+Sidepanel owns the `sidebar.content` slot, so native sidebar widgets are replaced by the Sidepanel widgets. No OpenCode config-file edits are needed to change the layout.
 
-Choose visible widgets near the top of `tui.tsx`:
+Open the settings dialog with:
 
-```ts
-const WIDGETS = {
-  context: true,
-  mcp: true,
-  agent: true,
-  activity: true,
-  workspace: true,
-  usage: true,
-  subagents: true,
-} as const;
-```
+- `/sidepanel-settings`
+- `/sidepanel-config` (alias)
+- Command palette: **Configure Sidepanel widgets**
 
-Set a value to `false` to hide that widget. The MCP widget reads live V2 MCP status through the OpenCode plugin data API.
+Select any widget to toggle it between shown and hidden. Settings are persisted per user and synchronized across OpenCode TUI windows.
+
+Available widgets:
+
+- Context
+- MCP servers
+- Agent
+- Activity
+- Workspace
+- Usage
+- Subagents
 
 ## Commands
 
 - `F6` or `/sidepanel`: open the Sidepanel as a session panel
+- `/sidepanel-settings`: show or hide widgets from the UI
 - `/all-sessions`: find sessions across all locations
 
 ## License
