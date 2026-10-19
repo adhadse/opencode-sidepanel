@@ -35,7 +35,7 @@ The repository also includes a prebuilt shell installer for environments where n
 When this repository is hosted, it can be run directly with:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/OWNER/opencode-sidepanel/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/adhadse/opencode-sidepanel/main/install.sh | sh
 ```
 
 ## Develop and publish
