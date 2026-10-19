@@ -8,9 +8,10 @@
     "./tui": "./dist/tui.js"
   },
   "scripts": {
-    "build": "bun build.ts",
+    "build": "bun build.ts && bun run bundle:installer",
     "typecheck": "tsgo --noEmit",
-    "prepare": "bun run build"
+    "prepare": "bun run build",
+    "bundle:installer": "bun scripts/build-installer.ts"
   },
   "peerDependencies": {
     "@opencode/plugin": "^2.0.0",

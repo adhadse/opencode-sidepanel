@@ -8,43 +8,39 @@ A plugin-owned sidebar for **OpenCode V2**. It replaces OpenCode's native sideba
 - workspace and usage details
 - durable subagent history with working/finished/failed states
 
-## Requirements
+## Install
 
-- OpenCode V2 (tested with 2.0.32)
-- Bun 1.3 or newer, only when building from source
+### One command (recommended)
 
-## Install from a clone
+After this repository is published, users install the prebuilt plugin with one command:
 
 ```sh
-git clone <repository-url> ~/Documents/opencode-sidepanel
-cd ~/Documents/opencode-sidepanel
-bun install
-bun run build
+curl -fsSL https://raw.githubusercontent.com/OWNER/opencode-sidepanel/main/install.sh | sh
 ```
 
-Add the absolute path to the OpenCode CLI plugin list in `~/.config/opencode/cli.json`:
+Replace `OWNER` with the GitHub account or organization that hosts this repository.
 
-``json
-{
-  "$schema": "https://opencode.ai/v2/cli.json",
-  "plugins": [
-    "/absolute/path/to/opencode-sidepanel"
-  ]
-}
+The installer writes the prebuilt plugin to `~/.config/opencode/plugins/opencode-sidepanel`, adds it to `~/.config/opencode/cli.json`, and saves a `.sidepanel-backup` copy of an existing CLI configuration. It needs only `sh`, `python3`, and `base64`; it does **not** require Git, Bun, or a build step.
+
+Restart OpenCode TUI windows after installation.
+
+### From a local checkout
+
+```sh
+./install.sh
 ```
-
-Restart OpenCode after changing the plugin list.
 
 ## Develop locally
 
-OpenCode discovers `tui.tsx` from the plugin directory. After editing it, run:
+Requirements: OpenCode V2 (tested with 2.0.32) and Bun 1.3 or newer.
 
 ```sh
+bun install
 bun run typecheck
 bun run build
 ```
 
-Restart the TUI if it does not hot-reload the plugin.
+`bun run build` compiles `dist/tui.js` and refreshes the installer bundle.
 
 ## Widget composition
 

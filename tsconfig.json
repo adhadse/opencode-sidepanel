@@ -7,8 +7,18 @@
     "jsxImportSource": "@opentui/solid",
     "strict": true,
     "skipLibCheck": true,
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["bun"]
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "bun"
+    ]
   },
-  "include": ["tui.tsx", "build.ts"]
+  "include": [
+    "tui.tsx",
+    "build.ts",
+    "scripts/build-installer.ts"
+  ]
 }
