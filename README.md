@@ -8,6 +8,8 @@ A plugin-owned sidebar for **OpenCode V2**. It replaces OpenCode's native sideba
 - workspace and usage details
 - durable subagent history with working/finished/failed states
 
+![OpenCode Sidepanel screenshot](assets/sidepanel-preview.svg)
+
 ## Install
 
 ### npm / npx (recommended)

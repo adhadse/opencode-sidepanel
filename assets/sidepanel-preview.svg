@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="620" viewBox="0 0 760 620" role="img" aria-labelledby="title desc">
+  <title id="title">OpenCode Sidepanel preview</title>
+  <desc id="desc">A dark terminal Sidepanel showing context, MCP status, agent, workspace, usage, and subagent widgets.</desc>
+  <rect width="760" height="620" fill="#121212"/>
+  <rect x="24" y="24" width="712" height="572" rx="10" fill="#1a1a1a" stroke="#3a3a3a"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="18">
+    <text x="52" y="65" fill="#8be9fd" font-weight="700">SIDEPANEL</text>
+    <text x="52" y="105" fill="#50fa7b" font-weight="700">CONTEXT</text>
+    <text x="52" y="136" fill="#50fa7b">████░░░░░░░░░░░░  24.0%</text>
+    <text x="52" y="164" fill="#a0a0a0">94,142 / 400,000 tokens</text>
+    <line x1="52" x2="708" y1="186" y2="186" stroke="#393939"/>
+    <text x="52" y="220" fill="#f8f8f2" font-weight="700">MCP</text>
+    <circle cx="61" cy="251" r="4" fill="#50fa7b"/><text x="78" y="258" fill="#f8f8f2">atlassian</text><text x="580" y="258" fill="#50fa7b">Connected</text>
+    <circle cx="61" cy="282" r="4" fill="#50fa7b"/><text x="78" y="289" fill="#f8f8f2">chrome-devtools</text><text x="580" y="289" fill="#50fa7b">Connected</text>
+    <circle cx="61" cy="313" r="4" fill="#50fa7b"/><text x="78" y="320" fill="#f8f8f2">SigNoz</text><text x="580" y="320" fill="#50fa7b">Connected</text>
+    <circle cx="61" cy="344" r="4" fill="#ff6b6b"/><text x="78" y="351" fill="#f8f8f2">sonarqube</text><text x="629" y="351" fill="#ff6b6b">Error</text>
+    <line x1="52" x2="708" y1="374" y2="374" stroke="#393939"/>
+    <text x="52" y="408" fill="#50fa7b" font-weight="700">AGENT</text>
+    <text x="52" y="437" fill="#50fa7b">[ready]</text><text x="166" y="437" fill="#f8f8f2">gpt-6-luna</text>
+    <text x="52" y="465" fill="#a0a0a0">Agent - build   Thinking - high</text>
+    <line x1="52" x2="708" y1="487" y2="487" stroke="#393939"/>
+    <text x="52" y="521" fill="#bd93f9" font-weight="700">SUBAGENTS - 2</text>
+    <text x="52" y="550" fill="#f1fa8c">◐ explore</text><text x="590" y="550" fill="#f1fa8c">Working</text>
+    <text x="75" y="576" fill="#a0a0a0">Inspecting the repository structure</text>
+  </g>
+</svg>
