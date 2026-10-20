@@ -5,7 +5,7 @@
     "": {
       "name": "opencode-sidepanel",
       "dependencies": {
-        "@opencode/plugin": "^2.0.32",
+        "@opencode/plugin": "2.0.32",
       },
       "devDependencies": {
         "@opentui/core": "0.5.17",

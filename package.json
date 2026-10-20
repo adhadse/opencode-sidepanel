@@ -35,6 +35,6 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@opencode/plugin": "^2.0.32"
+    "@opencode/plugin": "2.0.32"
   }
 }
