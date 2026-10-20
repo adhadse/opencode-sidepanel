@@ -12,8 +12,8 @@ if ! command -v python3 >/dev/null 2>&1; then
   exit 1
 fi
 
-mkdir -p "$PLUGIN_DIR/dist"
-TMP_BUNDLE="$PLUGIN_DIR/dist/tui.js.tmp.$$"
+mkdir -p "$PLUGIN_DIR"
+TMP_BUNDLE="$PLUGIN_DIR/tui.js.tmp.$$"
 cleanup() { rm -f "$TMP_BUNDLE"; }
 trap cleanup EXIT HUP INT TERM
 
@@ -23,7 +23,7 @@ if base64 --help 2>&1 | grep -q -- "--decode"; then
 else
   awk '/^__SIDEPANEL_BUNDLE__$/ { bundle=1; next } bundle { print }' "$0" | base64 -D > "$TMP_BUNDLE"
 fi
-mv "$TMP_BUNDLE" "$PLUGIN_DIR/dist/tui.js"
+mv "$TMP_BUNDLE" "$PLUGIN_DIR/tui.js"
 
 cat > "$PLUGIN_DIR/package.json" <<'JSON'
 {
@@ -32,7 +32,7 @@ cat > "$PLUGIN_DIR/package.json" <<'JSON'
   "private": true,
   "type": "module",
   "exports": {
-    "./tui": "./dist/tui.js"
+    "./tui": "./tui.js"
   }
 }
 JSON

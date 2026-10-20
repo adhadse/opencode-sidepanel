@@ -17,7 +17,7 @@ const configHome = process.env.XDG_CONFIG_HOME || join(homedir(), ".config");
 const configDir = join(configHome, "opencode");
 const configPath = join(configDir, "cli.json");
 const pluginDir = join(configDir, "plugins", "opencode-sidepanel");
-const pluginBundle = join(pluginDir, "dist", "tui.js");
+const pluginBundle = join(pluginDir, "tui.js");
 
 mkdirSync(configDir, { recursive: true });
 mkdirSync(dirname(pluginBundle), { recursive: true });
@@ -30,7 +30,7 @@ writeFileSync(
       version: manifest.version,
       private: true,
       type: "module",
-      exports: { "./tui": "./dist/tui.js" },
+      exports: { "./tui": "./tui.js" },
     },
     null,
     2,
