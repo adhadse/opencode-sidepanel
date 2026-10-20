@@ -12,29 +12,29 @@ A plugin-owned sidebar for **OpenCode V2**. It replaces OpenCode's native sideba
 
 ## Install
 
-### npm / npx (recommended)
+### npx from GitHub (recommended)
 
-After the package is published to npm, install it with one command:
+Install the latest release directly from the public GitHub repository:
+
+```sh
+npx --yes github:adhadse/opencode-sidepanel install
+```
+
+This downloads the prebuilt plugin, installs it under `~/.config/opencode/plugins/opencode-sidepanel`, and updates `~/.config/opencode/cli.json`. Users do not need Git, Bun, an npm account, or a build step.
+
+Restart OpenCode TUI windows after installation.
+
+### npm registry
+
+Once the package is published to npm, this shorter equivalent will also work:
 
 ```sh
 npx opencode-sidepanel@latest install
 ```
 
-The command adds the versioned npm package to `~/.config/opencode/cli.json`. OpenCode then downloads and loads it through its normal CLI plugin resolver. No Git clone, Bun installation, or build step is required for users.
-
-Restart OpenCode TUI windows after installation.
-
-To remove it, delete the `opencode-sidepanel@...` entry from the `plugins` array in `~/.config/opencode/cli.json`.
+Until then, use the GitHub command above.
 
 ### Alternative: standalone installer
-
-The repository also includes a prebuilt shell installer for environments where npm is unavailable:
-
-```sh
-./install.sh
-```
-
-When this repository is hosted, it can be run directly with:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/adhadse/opencode-sidepanel/main/install.sh | sh

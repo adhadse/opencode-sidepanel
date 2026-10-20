@@ -16,9 +16,27 @@ if (command !== "install") {
 const configHome = process.env.XDG_CONFIG_HOME || join(homedir(), ".config");
 const configDir = join(configHome, "opencode");
 const configPath = join(configDir, "cli.json");
-const packageSpecifier = manifest.name + "@" + manifest.version;
+const pluginDir = join(configDir, "plugins", "opencode-sidepanel");
+const pluginBundle = join(pluginDir, "dist", "tui.js");
 
 mkdirSync(configDir, { recursive: true });
+mkdirSync(dirname(pluginBundle), { recursive: true });
+copyFileSync(join(root, "dist", "tui.js"), pluginBundle);
+writeFileSync(
+  join(pluginDir, "package.json"),
+  JSON.stringify(
+    {
+      name: manifest.name,
+      version: manifest.version,
+      private: true,
+      type: "module",
+      exports: { "./tui": "./dist/tui.js" },
+    },
+    null,
+    2,
+  ) + "\n",
+);
+
 let config = { $schema: "https://opencode.ai/v2/cli.json" };
 if (existsSync(configPath)) {
   try {
@@ -40,7 +58,7 @@ if (!Array.isArray(config.plugins)) {
 }
 
 const localInstallPaths = new Set([
-  join(configDir, "plugins", "opencode-sidepanel"),
+  pluginDir,
   join(configDir, "plugins", "sidepanel"),
 ]);
 config.plugins = config.plugins.filter((entry) => {
@@ -51,10 +69,10 @@ config.plugins = config.plugins.filter((entry) => {
     localInstallPaths.has(entry)
   );
 });
-config.plugins.push(packageSpecifier);
+config.plugins.push(pluginDir);
 
 const temporary = configPath + ".tmp." + process.pid;
 writeFileSync(temporary, JSON.stringify(config, null, 2) + "\n");
 renameSync(temporary, configPath);
-console.log("Installed " + packageSpecifier + " in " + configPath);
+console.log("Installed " + manifest.name + "@" + manifest.version + " in " + pluginDir);
 console.log("Restart OpenCode TUI windows to load the plugin.");
